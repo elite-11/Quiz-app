@@ -1,24 +1,40 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter } from "react-router-dom";
-import { Provider } from "react-redux";
-import { store } from "./Redux/store.js";
+const express=require('express');
+const connect=require("./configs/db.js")
+const bodyParser = require("body-parser");
+const Port = process.env.PORT || 3755
+var cors = require('cors')
+const app=express();
+app.use(express.json());
+app.use(cors())
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+const loginAuth=require("./controller/auth.controller.js")
+app.use("/",loginAuth)
+const RegisterAuth=require("./controller/auth.controller.js")
+app.use("/",RegisterAuth)
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>
-);
+const quizAdd=require("./controller/quizAdd.controller.js")
+app.use("/admin",quizAdd)
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const quiz=require("./controller/displayQuiz.controller.js")
+app.use("/quiz",quiz)
+
+const getquiz = require("./controller/quizAdd.controller.js")
+app.use("/quiz",getquiz)
+
+const user=require("./controller/auth.controller.js")
+app.use("/user",user)
+
+const userResult=require("./controller/userData.controller.js")
+app.use("/userResult",userResult)
+
+app.listen(Port,async function(){
+    try {
+        await connect();
+           console.log(`Listening on ${Port}` )
+    } catch (error) {
+         console.log(err)
+    }
+})
+
+
